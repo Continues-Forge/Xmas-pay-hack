@@ -55,3 +55,6 @@ if __name__ == '__main__':
     parser.add_argument("--data_dir", type=str, required=True, help="Путь до папки с данными")
     args = parser.parse_args()
     main(args)
+    
+    while True:
+        pass
