@@ -1,8 +1,11 @@
-import pandas as pd
 import argparse
 import os
 from algorithm import Algorithm
+import logging
 
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 def fetch_data_paths(data_dir):
     """
@@ -29,16 +32,23 @@ def main(args):
     folder_path = args.data_dir
     data_paths = fetch_data_paths(folder_path)
     
-    
-    algorithm = Algorithm(
-        payments_path=data_paths['payments'],
-        providers_path=data_paths['providers'],
-        ex_rates_path=data_paths['ex_rates']
+    alg = Algorithm(
+        payments_file=data_paths['payments'],
+        providers_file=data_paths['providers'],
+        ex_rates_file=data_paths['ex_rates']
     )
-    
-    # TODO: algos
-    
-    
+    logging.log(level=20, msg='Инициализирован класс')
+
+    # Приводим данные в нормальный вид
+    alg.preprocess()
+    logging.log(level=20, msg='Данные причесаны')
+
+    alg.run()
+    logging.log(level=20, msg='Решение завершено !!!')
+
+    alg.df_payments.to_csv('res.csv', index=False)
+    logging.log(level=20, msg='Файл сохранен !!!')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Скрипт для обработки файлов с данными.")
