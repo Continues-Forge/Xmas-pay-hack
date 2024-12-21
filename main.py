@@ -1,1 +1,2 @@
-print("ху")
+import pandas as pd
+
