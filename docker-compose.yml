@@ -1,15 +1,10 @@
-version: "3.9"
+version: '3.8'
 
 services:
-  app:
+  main_service:
     build:
-      context: .  # Указываем путь к директории с Dockerfile
+      context: .
       dockerfile: Dockerfile
-    container_name: python_app
     volumes:
-      - .:/app  # Монтируем локальную директорию внутрь контейнера для удобства разработки
-    ports:
-      - "8000:8000"  # Пробрасываем порты (если приложение запускается на 8000 порту)
-    environment:
-      - PYTHONUNBUFFERED=1  # Гарантирует, что вывод в логах будет доступен сразу
-    command: python main.py  # Переопределяем команду на запуск приложения
+      - ./data:/app/data
+    command: ["python", "main.py", "--data_dir", "/app/data"]
