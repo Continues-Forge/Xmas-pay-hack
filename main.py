@@ -42,7 +42,9 @@ def main(args):
     # Приводим данные в нормальный вид
     alg.preprocess()
     logging.log(level=20, msg='Данные причесаны')
-
+    
+    logging.log(level=20, msg='Алгоритм запущен')
+    
     alg.run()
     logging.log(level=20, msg='Решение завершено !!!')
 
