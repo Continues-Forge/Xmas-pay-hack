@@ -61,30 +61,27 @@ class Algorithm:
         return df_providers
 
     def run(self):
-        # Предварительная группировка провайдеров по валюте
-        providers_by_cur = {cur: group.sort_values(by='TIME', ascending=False) for cur, group in
-                            self.df_providers.groupby('cur')}
-
         def find_closest_provider(row):
-            # Получаем соответствующую группу провайдеров по валюте
-            temp_providers = providers_by_cur.get(row['cur'], pd.DataFrame())
-
             # Фильтруем по времени и суммам
-            temp_providers = temp_providers[
-                (temp_providers['TIME'] <= row['TIME']) &
-                (temp_providers['MIN_SUM_in_USD'] <= row['amount_in_USD']) &
-                (row['amount_in_USD'] <= temp_providers['MAX_SUM_in_USD'])
+            temp_providers = self.df_providers[
+                (self.df_providers['TIME'] <= row['TIME']) &
+                (self.df_providers['MIN_SUM_in_USD'] <= row['amount_in_USD']) &
+                (row['amount_in_USD'] <= self.df_providers['MAX_SUM_in_USD'])
                 ]
 
             # Если нет подходящих провайдеров, возвращаем пустой список
             if temp_providers.empty:
                 return None
 
-            # Сортируем по комиссии и среднему времени
-            temp_providers = temp_providers.sort_values(by=['COMMISSION', 'AVG_TIME'], ascending=[True, True])
+            temp_providers = temp_providers.sort_values(by='TIME', ascending=False)
 
-            # Убираем дубликаты по ID
             closest_provider = temp_providers.drop_duplicates(subset='ID', keep='first')
+
+            closest_provider = closest_provider[closest_provider['cur'] == row['cur']]
+
+            # Сортируем по комиссии и среднему времени
+            closest_provider = closest_provider.sort_values(by=['COMMISSION', 'AVG_TIME', 'CONVERSION'],
+                                                        ascending=[True, True, False])
 
             return '-'.join(list(map(lambda i: str(i), closest_provider['ID'])))
 
